@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Dict, Optional
 from pydantic import BaseModel
-from datetime import date
+from typing import Optional
 
 class DayRequest(BaseModel):
-    date: date
-    planned_wakeups: dict[str, str]
-    actual_wakeup: str | None = None
+    date: str                      # "2026-01-23"
+    actual_wakeup: Optional[str] = None
+
+    
 
 @dataclass
 class Block:
@@ -16,3 +18,8 @@ class Block:
     fixed_time: str | None = None
     start: datetime | None = None
     end: datetime | None = None
+
+
+
+
+

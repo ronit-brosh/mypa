@@ -1,4 +1,8 @@
 from datetime import date
 
-def day_key(d: date) -> str:
-    return d.strftime("%A").lower()
+
+def day_key(date_str):
+    d = date.fromisoformat(date_str)
+    print("*********",d.strftime("%a").lower()[:3])
+    return d.strftime("%a").lower()[:3]
+

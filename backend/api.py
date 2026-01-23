@@ -1,36 +1,31 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import date
-from core.scheduler import Block, build_schedule, reanchor_schedule
 from fastapi.middleware.cors import CORSMiddleware
-from core.google_calendar import get_calendar_events
 
-from backend.models import DayRequest
-from backend.core.planner import plan_day
-
+from core.models import DayRequest
+from core.planner import plan_day, load_wakeup_times
 
 
 app = FastAPI()
+print("🔥 THIS IS THE APP WITH CORS 🔥")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # MVP בלבד!
-    allow_credentials=True,
+    allow_origins=["http://localhost:5500"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+import json
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 
-class DayRequest(BaseModel):
-    date: str
-    planned_wakeups: dict
-    actual_wakeup: str | None = None
 
 
-def day_key(date_str):
-    d = date.fromisoformat(date_str)
-    return d.strftime("%a").lower()[:3]
 
 @app.get("/")
 def root():
@@ -38,5 +33,20 @@ def root():
 
 @app.post("/plan/day")
 def plan_day_endpoint(req: DayRequest):
-    return plan_day(req)
+    return plan_day(req,base_dir=BASE_DIR)
 
+
+
+@app.get("/wakeup-times")
+def get_wakeup_times():
+    return load_wakeup_times(base_dir=BASE_DIR)
+
+
+@app.get("/__cors_test")
+def cors_test():
+    return {"ok": True}
+
+
+@app.get("/__whoami")
+def whoami():
+    return {"app": "api.py"}

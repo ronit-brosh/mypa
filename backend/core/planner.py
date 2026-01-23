@@ -5,14 +5,25 @@ from .models import DayRequest, Block
 from .scheduler import build_schedule, reanchor_schedule
 from .google_calendar import get_calendar_events
 from .utils import day_key
+import json
+from pathlib import Path
+from typing import Dict
 
+def load_wakeup_times(base_dir: Path) -> Dict[str, str]:
+    path = base_dir / "data" / "wakeup_times.json"
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-
-
-def plan_day(req: DayRequest) -> dict:
+def plan_day(req: DayRequest, base_dir: Path) -> dict:
     # ---- context בסיסי ----
+    print("$$$$ Planning day for:", req.date)
+    wakeup_times = load_wakeup_times(base_dir)
+    print("$$$$ Loaded wakeup times:", wakeup_times)
     day = day_key(req.date)
-    planned = req.planned_wakeups[day]
+    print("$$$$ Day key:", day)
+    planned = wakeup_times[day]
+
+
 
     # ---- בלוקים בסיסיים (הרגלים + אילוצים ידועים) ----
     blocks: List[Block] = [
@@ -53,19 +64,23 @@ def plan_day(req: DayRequest) -> dict:
 
     # ---- בניית לו״ז ----
     schedule = build_schedule(
-        date=req.date,
-        planned_wakeup=planned,
-        blocks=blocks
+        req.date,
+        planned,
+        blocks
     )
 
+    
+
     # ---- התאמה למציאות (קימה בפועל) ----
+
     if req.actual_wakeup:
         schedule = reanchor_schedule(
-            schedule=schedule,
-            date=req.date,
-            planned_wakeup=planned,
-            actual_wakeup=req.actual_wakeup
+            schedule,
+            req.date,
+            planned,
+            req.actual_wakeup
         )
+
 
     # ---- פלט API-friendly ----
     return {

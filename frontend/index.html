@@ -1,14 +1,40 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <title>mypa</title>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", Arial, sans-serif;
+      direction: rtl;
+      padding: 20px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+  </style>
+</head>
+
 <body>
-  <h2>mypa</h2>
+  <h2>My Private Assistance</h2>
+
+    <h3 id="dayTitle"></h3>
 
   <label>קמתי ב־</label>
-<input type="time" id="actualWakeup">
-
+  <input type="time" id="actualWakeup">
 
   <button onclick="buildDay()">בנה יום</button>
 
-<ul id="schedule"></ul>
-
+  <ul id="schedule"></ul>
 
   <script src="app.js"></script>
 </body>
+
+
+</html>
+
+
+
